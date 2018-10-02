@@ -34,6 +34,57 @@
     ]
   };
 
+  const dbPromise = idb.open('keyval-store', 1, upgradeDB => {
+    upgradeDB.createObjectStore('keyval');
+  });
+
+  const idbKeyval = {
+  get(key) {
+    return dbPromise.then(db => {
+      return db.transaction('keyval')
+        .objectStore('keyval').get(key);
+    });
+  },
+  set(key, val) {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').put(val, key);
+      return tx.complete;
+    });
+  },
+  delete(key) {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').delete(key);
+      return tx.complete;
+    });
+  },
+  clear() {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval', 'readwrite');
+      tx.objectStore('keyval').clear();
+      return tx.complete;
+    });
+  },
+  keys() {
+    return dbPromise.then(db => {
+      const tx = db.transaction('keyval');
+      const keys = [];
+      const store = tx.objectStore('keyval');
+
+      // This would be store.getAllKeys(), but it isn't supported by Edge or Safari.
+      // openKeyCursor isn't supported by Safari, so we fall back
+      (store.iterateKeyCursor || store.iterateCursor).call(store, cursor => {
+        if (!cursor) return;
+        keys.push(cursor.key);
+        cursor.continue();
+      });
+
+      return tx.complete.then(() => keys);
+    });
+  }
+};
+
   /*****************************************************************************
    *
    * Event listeners for UI elements
@@ -216,8 +267,11 @@
 
   // TODO add saveSelectedCities function here
   app.saveSelectedCities = function() {
-    var selectedCities = JSON.stringify(app.selectedCities);
-    localStorage.selectedCities = selectedCities;
+    //var selectedCities = JSON.stringify(app.selectedCities);
+    //localStorage.selectedCities = selectedCities;
+
+    idbKeyval.set('selectedCities', app.selectedCities);
+
   }
 
   app.getIconClass = function(weatherCode) {
@@ -361,9 +415,10 @@
    *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
    ************************************************************************/
 
-  app.selectedCities = localStorage.selectedCities;
+  //app.selectedCities = localStorage.selectedCities;
+  app.selectedCities = idbKeyval.get('selectedCities');
   if (app.selectedCities) {
-    app.selectedCities = JSON.parse(app.selectedCities);
+    //app.selectedCities = JSON.parse(app.selectedCities);
     app.selectedCities.forEach(function(city) {
       app.getForecast(city.key, city.label);
     });
