@@ -2,7 +2,7 @@
 
 //This file must live in the application root because the scope for service workers is defined by the directory in which the file resides.
 
-var cacheName = 'weatherPWA-step-6-1-8';
+var cacheName = 'weatherPWA-step-6-1-9';
 /*
 Be sure to include all permutations of file names, for example our app is
 served from index.html, but it may also be requested as / since the server
