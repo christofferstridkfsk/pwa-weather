@@ -234,6 +234,15 @@
     db.selectedCities.bulkPut(app.selectedCities).catch(function(error) {
        console.log ("Ooops: " + error);
     });
+
+
+    Dexie.export(db).then(
+      result=>
+      {
+        console.log(JSON.stringify(result));
+      }
+    );
+
   }
 
   app.getIconClass = function(weatherCode) {
@@ -379,7 +388,6 @@
 
 
   db.selectedCities.toArray().then(function(selectedCitiesFromDb){
-    debugger;
     app.selectedCities = selectedCitiesFromDb;
 
     if (!!app.selectedCities && app.selectedCities.length>0) {
