@@ -44,6 +44,7 @@
     <h1 class="header__title">Weather PWA</h1>
     <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
     <button id="butAdd" class="headerButton" aria-label="Add"></button>
+    <button id="butImportExport" class="headerButton" aria-label="Export"></button>
   </header>
 
   <main class="main">
@@ -146,7 +147,7 @@
     </div>
   </main>
 
-  <div class="dialog-container">
+  <div class="dialog-container" id="dialogAdd">
     <div class="dialog">
       <div class="dialog-title">Add new city</div>
       <div class="dialog-body">
@@ -165,6 +166,21 @@
       <div class="dialog-buttons">
         <button id="butAddCity" class="button">Add</button>
         <button id="butAddCancel" class="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-container" id="dialogImportExport">
+    <div class="dialog">
+      <div class="dialog-title">Import/Export</div>
+      <div class="dialog-body">
+          <div class="">
+            <textarea id="textAreaImportExport" rows="8" cols="80"></textarea>
+          </div>
+      </div>
+      <div class="dialog-buttons">
+        <button id="butExport" class="button">Export</button>
+        <!-- <button id="butImport" class="button">Import</button> -->
       </div>
     </div>
   </div>

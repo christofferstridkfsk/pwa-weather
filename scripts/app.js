@@ -22,7 +22,8 @@
     spinner: document.querySelector('.loader'),
     cardTemplate: document.querySelector('.cardTemplate'),
     container: document.querySelector('.main'),
-    addDialog: document.querySelector('.dialog-container'),
+    addDialog: document.querySelector('#dialogAdd'),
+    importExportDialog : document.querySelector('#dialogImportExport'),
     daysOfWeek: [
       'Mon',
       'Tue',
@@ -62,6 +63,24 @@
     app.toggleAddDialog(true);
   });
 
+  document.getElementById('butImportExport').addEventListener('click', function() {
+
+    app.toggleImportExportDialog(true);
+  });
+
+  document.getElementById('butExport').addEventListener('click', function() {
+    Dexie.export(db).then(
+      result=>
+      {
+        //console.log(JSON.stringify(result));
+        var someJson = JSON.stringify(result);
+        var ta = document.getElementById('textAreaImportExport');
+        ta.innerText = someJson;
+      }
+    );
+  });
+
+
   document.getElementById('butAddCity').addEventListener('click', function() {
     // Add the newly selected city
     var select = document.getElementById('selectCityToAdd');
@@ -96,6 +115,17 @@
       app.addDialog.classList.remove('dialog-container--visible');
     }
   };
+
+  // Toggles the visibility of the add new city dialog.
+  app.toggleImportExportDialog = function(visible) {
+    if (visible) {
+      app.importExportDialog.classList.add('dialog-container--visible');
+    } else {
+      app.importExportDialog.classList.remove('dialog-container--visible');
+    }
+  };
+
+
 
   // Updates a weather card with the latest weather forecast. If the card
   // doesn't already exist, it's cloned from the template.
@@ -234,14 +264,6 @@
     db.selectedCities.bulkPut(app.selectedCities).catch(function(error) {
        console.log ("Ooops: " + error);
     });
-
-
-    Dexie.export(db).then(
-      result=>
-      {
-        console.log(JSON.stringify(result));
-      }
-    );
 
   }
 
